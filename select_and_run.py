@@ -2,21 +2,24 @@ import tkinter as tk
 import tkinter.filedialog
 #from tkinter import ttk
 # tkinter.font as tkFont
-#import os
+import os
 
 class SelectAndRun(): #Selecting files and running simple scripts on them
     def __init__(self, master):
         self.master = master
         master.title('Select and Run - Tkinter') 
         
+        
         self.menu_var = tk.StringVar()
         self.menu_choices = sorted({'Sum', 'Multiply', 'All'})
         self.menu_var.set('Sum') # default value
         self.menu = tk.OptionMenu(master, self.menu_var, *self.menu_choices)
         
+        self.directory_output= None
         self.filename = None
         self.browsedvar = tk.StringVar()
         self.textbox_var = tk.StringVar()
+        self.file_output = str(self.directory_output)+'/txt_output.txt'
         
         self.label_title = tk.Label(master, text='Get the Sum/Product of Numbers in a txt file')
         
@@ -27,6 +30,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         #self.printButton = tk.Button(master, text='Print', command=self.printText)
         self.selectFile = tk.Button(master, text='Select File', command=self.browseText)
         self.runScript = tk.Button(master, text='Run', command=lambda:self.chooseScript())
+        self.downloadButton = tk.Button(master, text='Download', command=self.export_to_txt)
         
         self.label_title.grid(row=0, column=0, columnspan=2)
         self.entry.grid(row=1, column=1, columnspan=1, sticky="ew", padx=2, pady=2)
@@ -35,6 +39,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         self.selectFile.grid(row=1, column=0, columnspan=1, sticky="ew", padx=2, pady=2)
         self.runScript.grid(row=2, column=0, columnspan=1, sticky="ew", padx=2, pady=2)
         self.textbox.grid(row=3, column = 0, columnspan=2, sticky="ew", padx=2, pady=2)
+        self.downloadButton.grid(row=4, column = 0, columnspan=2, sticky="ew", padx=2, pady=2)
     
     def validate(self, inputText): #This processes input, validates it
         if not inputText:
@@ -46,6 +51,16 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
             return True
         except ValueError:
             return False
+    def export_to_txt(self):
+        self.directory_output= str(os.path.dirname(self.filename))+'/SelectAndRun_output.txt'
+        output_file = self.directory_output
+        print(output_file)
+        
+        with open(output_file, 'wb') as outfile:
+                outfile.write((str(self.textbox_var.get())).encode())
+                outfile.write(('\n').encode())
+        self.popup('download')
+        return 0
     
     def printText(self): #Prints text in console
         print(self.filename)
@@ -79,7 +94,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
                         count=count+int(i)
             return count
         except FileNotFoundError:
-            self.popup()
+            self.popup('warning')
     
     def runMultOnFile(self): #Runs a script (counting) on self.filename
         try:
@@ -95,5 +110,14 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         except FileNotFoundError:
             self.popup()
             
-    def popup(self): #Produces 'file error' pop up on screen
-        tk.messagebox.showwarning('File Error', 'Script cannot be run on selected file. Check file path and try again.')
+    def popup(self, popup_type): #Produces 'file error' pop up on screen
+        if popup_type =='warning':
+            tk.messagebox.showwarning('File Error', 'Script cannot be run on selected file. Check file path and try again.')
+            
+        if popup_type == 'download':
+            tk.messagebox.showinfo('Download complete', 'Your result has been saved as ' + '<SelectAndRun_output.txt>' + ' in the same directory as your input file.')
+            
+            
+            
+            
+            
