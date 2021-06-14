@@ -1,2 +1,6 @@
 #ignoring files
 documents/
+__pycache__/
+
+#ignoring extensions
+*.pyc
