@@ -16,22 +16,25 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         
         self.filename = None
         self.browsedvar = tk.StringVar()
+        self.textbox_var = tk.StringVar()
         
         self.label_title = tk.Label(master, text='Get the Sum/Product of Numbers in a txt file')
         
         vcmd = master.register(self.validate) # we have to wrap the command
         
         self.entry = tk.Entry(master, textvariable = self.browsedvar, validate='key', validatecommand=(vcmd,'%P'))
+        self.textbox = tk.Entry(master, textvariable = self.textbox_var)
         #self.printButton = tk.Button(master, text='Print', command=self.printText)
         self.selectFile = tk.Button(master, text='Select File', command=self.browseText)
         self.runScript = tk.Button(master, text='Run', command=lambda:self.chooseScript())
         
         self.label_title.grid(row=0, column=0, columnspan=2)
-        self.entry.grid(row=1, column=1, columnspan=1, padx=2, pady=2)
+        self.entry.grid(row=1, column=1, columnspan=1, sticky="ew", padx=2, pady=2)
         #self.printButton.grid(row=2, column=0, columnspan=5)
-        self.menu.grid(row=2, column=1,columnspan=1, padx=2, pady=2)
+        self.menu.grid(row=2, column=1,columnspan=1, sticky="ew", padx=2, pady=2)
         self.selectFile.grid(row=1, column=0, columnspan=1, sticky="ew", padx=2, pady=2)
         self.runScript.grid(row=2, column=0, columnspan=1, sticky="ew", padx=2, pady=2)
+        self.textbox.grid(row=3, column = 0, columnspan=2, sticky="ew", padx=2, pady=2)
     
     def validate(self, inputText): #This processes input, validates it
         if not inputText:
@@ -56,12 +59,13 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
 
     def chooseScript(self):
         if self.menu_var.get()=='Sum':
-            print('Sum is: {}'.format(self.runSumOnFile()))
+            self.textbox_var.set('Sum is '+str(self.runSumOnFile()))
+            
         if self.menu_var.get()=='Multiply':
-            print('Product is: {}'.format(self.runMultOnFile()))
+            self.textbox_var.set('Product is '+str(self.runMultOnFile()))
+            
         if self.menu_var.get()=='All':
-            print('Sum is: {}'.format(self.runSumOnFile()))
-            print('Product is: {}'.format(self.runMultOnFile()))
+            self.textbox_var.set('Sum is '+str(self.runSumOnFile())+', Product is '+str(self.runMultOnFile()))
     
     def runSumOnFile(self): #Runs a script (counting) on self.filename
         try:
