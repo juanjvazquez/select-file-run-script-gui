@@ -30,7 +30,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         #self.printButton = tk.Button(master, text='Print', command=self.printText)
         self.selectFile = tk.Button(master, text='Select File', command=self.browseText)
         self.runScript = tk.Button(master, text='Run', command=lambda:self.chooseScript())
-        self.downloadButton = tk.Button(master, text='Download', command=self.export_to_txt)
+        self.downloadButton = tk.Button(master, text='Download', command=self.export_to_txt, state = tk.DISABLED)
         
         self.label_title.grid(row=0, column=0, columnspan=2)
         self.entry.grid(row=1, column=1, columnspan=1, sticky="ew", padx=2, pady=2)
@@ -81,6 +81,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
             
         if self.menu_var.get()=='All':
             self.textbox_var.set('Sum is '+str(self.runSumOnFile())+', Product is '+str(self.runMultOnFile()))
+        self.downloadButton.configure(state = tk.NORMAL)
     
     def runSumOnFile(self): #Runs a script (counting) on self.filename
         try:
