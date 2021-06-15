@@ -1,7 +1,7 @@
 import tkinter as tk
 import tkinter.filedialog
 import datetime
-import os
+import webbrowser, os
 #from tkinter import ttk
 # tkinter.font as tkFont
 
@@ -22,6 +22,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         self.menubar = tk.Menu(master)  
         self.menubar.add_command(label="Home")  
         self.menubar.add_command(label="Test", command=self.getTestFile)
+        self.menubar.add_command(label="Open Downloads Folder", command=self.downloadsFolder)
         self.master.config(menu=self.menubar)
         
         #directory related variables - directory entry box, output files
@@ -84,6 +85,9 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
     def getTestFile(self): #Helps user understand basic usage of the app using test files saved in app folder <test_files/>
         self.browsedvar.set('files/test_files/testnum.txt')
         #print('test')
+    def downloadsFolder(self):
+        downloadsFolder_path = "files/output_files"
+        webbrowser.open(os.path.realpath(downloadsFolder_path))
         
     def export_to_txt(self): #Exports result to a txt file in folder <output_files/> once Download button is pressed
             #self.directory_output = str(os.path.dirname(self.filename))+'/SelectAndRun_output.txt'
