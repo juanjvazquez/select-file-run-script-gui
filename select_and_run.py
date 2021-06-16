@@ -30,7 +30,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         
         self.menu_directories = tk.Menu(self.menubar)
         self.menubar.add_cascade(menu=self.menu_directories, label='Directories')
-        self.menu_directories.add_command(label='Open Output Folder', command=self.downloadsFolder)
+        self.menu_directories.add_command(label='Open Output Folder', command=self.openDownloadsFolder)
         self.menu_directories.add_command(label='Show Run Logs', command=self.openRunLogs)
         
         self.master.config(menu=self.menubar)
@@ -103,10 +103,10 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         self.browsedvar.set('files/test_files/{}'.format(filename))
         #print('test')
         
-    def downloadsFolder(self):
+    def openDownloadsFolder(self): #Command to open Output/Downloads folder
         webbrowser.open(os.path.realpath(self.downloadsFolder_path))
         
-    def openRunLogs(self):
+    def openRunLogs(self): #Command to open txt file containing all run logs performed since its last creation
         if os.path.isfile(self.history_file):
             webbrowser.open(os.path.realpath(self.history_file))
         else:
