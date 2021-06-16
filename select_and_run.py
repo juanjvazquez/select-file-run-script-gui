@@ -10,20 +10,36 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
     def __init__(self, master):
         #master
         self.master = master
-        master.title('Select and Run - Tkinter') 
+        master.title('Select and Run - Tkinter')
+        master.option_add('*tearOff', tk.FALSE)
         
+        self.history_file = 'files/run_log.txt'
+        self.downloadsFolder_path = "files/output_files"
         #menu
+        self.menubar = tk.Menu(master)
+        
+        self.menu_home = tk.Menu(self.menubar)
+        self.menubar.add_cascade(menu=self.menu_home, label='Home')
+        
+        self.menu_test = tk.Menu(self.menubar)
+        self.menubar.add_cascade(menu=self.menu_test, label='Test')
+        self.submenu_use_test_file = tk.Menu(self.menu_test)
+        self.menu_test.add_cascade(menu=self.submenu_use_test_file, label='Use Test File')
+        for f in os.listdir('files/test_files'):
+            self.submenu_use_test_file.add_command(label=os.path.basename(f), command=lambda f=f: self.getTestFile(f))
+        
+        self.menu_directories = tk.Menu(self.menubar)
+        self.menubar.add_cascade(menu=self.menu_directories, label='Directories')
+        self.menu_directories.add_command(label='Open Output Folder', command=self.downloadsFolder)
+        self.menu_directories.add_command(label='Show Run Logs', command=self.openRunLogs)
+        
+        self.master.config(menu=self.menubar)
+        
+        #dropdown menu for script choices
         self.menu_var = tk.StringVar()
         self.menu_choices = sorted({'Sum', 'Multiply', 'All'})
         self.menu_var.set('Sum') # default value
         self.menu = tk.OptionMenu(master, self.menu_var, *self.menu_choices)
-        
-        #dropdown menu for script choices
-        self.menubar = tk.Menu(master)  
-        self.menubar.add_command(label="Home")  
-        self.menubar.add_command(label="Test", command=self.getTestFile)
-        self.menubar.add_command(label="Open Downloads Folder", command=self.downloadsFolder)
-        self.master.config(menu=self.menubar)
         
         #directory related variables - directory entry box, output files
             #self.directory_output= None
@@ -66,28 +82,35 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
             return False
     
     def runHistory(self): #Produces a file <run_log.txt> containing all the times <Run> button has been pressed and the result
-        history_file = 'files/run_log.txt'
-        if os.path.isfile(history_file):
+        if os.path.isfile(self.history_file):
             print('exists')
-            with open(history_file, 'ab') as outfile:
+            with open(self.history_file, 'ab') as outfile:
                 outfile.write(('Date: '+str(datetime.datetime.now())+'\n').encode('utf-8'))
+                outfile.write(('Input File: '+str(self.browsedvar.get())+'\n').encode('utf-8'))
                 outfile.write(('Result: '+str(self.textbox_var.get())+'\n').encode('utf-8'))
                 outfile.write((str('------------------------------\n')).encode('utf-8'))
         else:
             print('doesn\'t exist')
-            with open(history_file, 'wb') as outfile:
+            with open(self.history_file, 'wb') as outfile:
                 outfile.write((str('------------------------------\n')).encode('utf-8'))
                 outfile.write(('Date: '+str(datetime.datetime.now())+'\n').encode('utf-8'))
+                outfile.write(('Input File: '+str(self.browsedvar.get())+'\n').encode('utf-8'))
                 outfile.write(('Result: '+str(self.textbox_var.get())+'\n').encode('utf-8'))
                 outfile.write((str('------------------------------\n')).encode('utf-8'))
                 return 0
     
-    def getTestFile(self): #Helps user understand basic usage of the app using test files saved in app folder <test_files/>
-        self.browsedvar.set('files/test_files/testnum.txt')
+    def getTestFile(self, filename): #Helps user understand basic usage of the app using test files saved in app folder <test_files/>
+        self.browsedvar.set('files/test_files/{}'.format(filename))
         #print('test')
+        
     def downloadsFolder(self):
-        downloadsFolder_path = "files/output_files"
-        webbrowser.open(os.path.realpath(downloadsFolder_path))
+        webbrowser.open(os.path.realpath(self.downloadsFolder_path))
+        
+    def openRunLogs(self):
+        if os.path.isfile(self.history_file):
+            webbrowser.open(os.path.realpath(self.history_file))
+        else:
+            self.popup('runlogs')
         
     def export_to_txt(self): #Exports result to a txt file in folder <output_files/> once Download button is pressed
             #self.directory_output = str(os.path.dirname(self.filename))+'/SelectAndRun_output.txt'
@@ -140,6 +163,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
                 for i in line:
                     if i.isdigit():
                             prod=prod*int(i)
+                            print(prod)
             return prod
         except FileNotFoundError:
             self.popup()
@@ -150,5 +174,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
             
         if popup_type == 'download':
             tk.messagebox.showinfo('Download complete', 'Your result has been saved in the <output_files> folder. Please check the \'Open Downloads Folder\' button in the menu.')
-
+            
+        if popup_type == 'runlogs':
+            tk.messagebox.showinfo('Run Logs file missing', 'It seems that you do not have a Run Logs file. Try running a script to create one.')
 
