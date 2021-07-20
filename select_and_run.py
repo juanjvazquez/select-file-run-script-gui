@@ -1,5 +1,6 @@
 import tkinter as tk
 import tkinter.filedialog
+import tkinter.messagebox
 import datetime
 import webbrowser, os
 #from tkinter import ttk
@@ -83,14 +84,14 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
     
     def runHistory(self): #Produces a file <run_log.txt> containing all the times <Run> button has been pressed and the result
         if os.path.isfile(self.history_file):
-            print('exists')
+            #print('exists')
             with open(self.history_file, 'ab') as outfile:
                 outfile.write(('Date: '+str(datetime.datetime.now())+'\n').encode('utf-8'))
                 outfile.write(('Input File: '+str(self.browsedvar.get())+'\n').encode('utf-8'))
                 outfile.write(('Result: '+str(self.textbox_var.get())+'\n').encode('utf-8'))
                 outfile.write((str('------------------------------\n')).encode('utf-8'))
         else:
-            print('doesn\'t exist')
+            #print('doesn\'t exist')
             with open(self.history_file, 'wb') as outfile:
                 outfile.write((str('------------------------------\n')).encode('utf-8'))
                 outfile.write(('Date: '+str(datetime.datetime.now())+'\n').encode('utf-8'))
@@ -101,7 +102,6 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
     
     def getTestFile(self, filename): #Helps user understand basic usage of the app using test files saved in app folder <test_files/>
         self.browsedvar.set('files/test_files/{}'.format(filename))
-        #print('test')
         
     def openDownloadsFolder(self): #Command to open Output/Downloads folder
         webbrowser.open(os.path.realpath(self.downloadsFolder_path))
@@ -126,7 +126,6 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
         file = tkinter.filedialog.askopenfilename(initialdir="/", title="Select File",
                                           filetypes=(("txt","*.txt"), ("all files", "*.*")))
         self.browsedvar.set(file)
-        print(self.filename)
 
     def chooseScript(self): #Runs the script chosen with dropdown menu
         if self.menu_var.get()=='Sum':
@@ -163,7 +162,7 @@ class SelectAndRun(): #Selecting files and running simple scripts on them
                 for i in line:
                     if i.isdigit():
                             prod=prod*int(i)
-                            print(prod)
+
             return prod
         except FileNotFoundError:
             self.popup()
